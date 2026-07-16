@@ -1,0 +1,26 @@
+# .NET
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/appsettings.*.local.json
+*.db
+*.db-shm
+*.db-wal
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+
+# IDE / OS
+.vs/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Secrets
+.env
+*.pfx

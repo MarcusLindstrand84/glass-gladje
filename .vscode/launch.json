@@ -1,0 +1,43 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend API",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "",
+      "program": "${workspaceFolder}/backend/src/Glassgladje.Api/bin/Debug/net10.0/Glassgladje.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/backend/src/Glassgladje.Api",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5080"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      }
+    },
+    {
+      "name": "Frontend (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend",
+      "preLaunchTask": "Start Frontend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack (tasks)",
+      "configurations": [],
+      "preLaunchTask": "Start Full Stack",
+      "stopAll": true,
+      "presentation": {
+        "order": 1,
+        "group": "glassgladje"
+      }
+    }
+  ]
+}

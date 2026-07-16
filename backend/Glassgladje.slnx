@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Glassgladje.Api/Glassgladje.Api.csproj" />
+    <Project Path="src/Glassgladje.Application/Glassgladje.Application.csproj" />
+    <Project Path="src/Glassgladje.Domain/Glassgladje.Domain.csproj" />
+    <Project Path="src/Glassgladje.Infrastructure/Glassgladje.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Glassgladje.UnitTests/Glassgladje.UnitTests.csproj" />
+  </Folder>
+</Solution>

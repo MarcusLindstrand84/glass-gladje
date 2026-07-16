@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#faf8f5"/>
+  <circle cx="32" cy="32" r="26" fill="#f5efe6"/>
+  <!-- Spoon -->
+  <path d="M14 42c7-5 14-12 19-19" stroke="#c4a574" stroke-width="3.5" stroke-linecap="round"/>
+  <ellipse cx="36" cy="34" rx="13" ry="7.5" transform="rotate(-28 36 34)" fill="#c4a574"/>
+  <ellipse cx="36" cy="33" rx="9.5" ry="4.8" transform="rotate(-28 36 33)" fill="#f0e2bc" opacity="0.55"/>
+  <!-- Scoop -->
+  <ellipse cx="34" cy="24" rx="12.5" ry="11.5" fill="#e8a58a"/>
+  <ellipse cx="30" cy="20" rx="4" ry="3" fill="#fff" opacity="0.4"/>
+  <path d="M26 23c2.5 1.5 6 2.2 10 1.8" stroke="#fff8f0" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  <!-- Melt drip -->
+  <path d="M40 38c.4 2.5 0 5-1 7" stroke="#e8a58a" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="38.8" cy="46" r="1.4" fill="#e8a58a"/>
+</svg>

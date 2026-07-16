@@ -1,0 +1,24 @@
+@host = http://localhost:5080
+@token = 
+
+### Health
+GET {{host}}/api/health
+
+### Products
+GET {{host}}/api/products
+
+### Product by slug
+GET {{host}}/api/products/solmogen-jordgubb
+
+### Login admin
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@glassgladje.se",
+  "password": "ChangeMe!Admin1"
+}
+
+### Me
+GET {{host}}/api/auth/me
+Authorization: Bearer {{token}}

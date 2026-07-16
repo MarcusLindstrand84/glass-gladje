@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: glassgladje-db
+    environment:
+      POSTGRES_USER: glassgladje
+      POSTGRES_PASSWORD: glassgladje_dev
+      POSTGRES_DB: glassgladje
+    ports:
+      - "5432:5432"
+    volumes:
+      - glassgladje_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U glassgladje"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  glassgladje_pg:
