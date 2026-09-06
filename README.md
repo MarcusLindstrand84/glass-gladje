@@ -10,7 +10,7 @@ Premium svensk online-glassbutik med e-handel, smakrådgivare (röstkonsultation
 |-------|------------|
 | Frontend | React 18 + TypeScript + Vite + Tailwind CSS v4 |
 | Backend | ASP.NET Core 10 Web API (clean architecture) |
-| Database | **SQL Server** (t.ex. `localhost\SQLEXPRESS`) |
+| Database | **SQL Server** (`DESKTOP-4C7FIAD\SQLEXPRESS` i Development) |
 | Auth | ASP.NET Identity + JWT + refresh tokens |
 | Payments | Stripe (dev-mock without keys) |
 | Voice | ElevenLabs TTS + Web Speech STT |
@@ -21,7 +21,7 @@ Premium svensk online-glassbutik med e-handel, smakrådgivare (röstkonsultation
 
 - .NET 10 SDK
 - Node.js 20+
-- SQL Server Express: t.ex. `localhost\SQLEXPRESS` (Windows Authentication)
+- SQL Server Express (Windows Authentication). Development är förkonfigurerad mot `DESKTOP-4C7FIAD\SQLEXPRESS`
 - VS Code (valfritt, men rekommenderas)
 
 ### Bygga (utan att hoppa mellan mappar)
@@ -88,21 +88,23 @@ npm run dev
 
 ## SQL Server & secrets
 
-Sätt anslutningssträng och JWT via miljövariabler eller `appsettings.Development.json` (committad lokal mall). Maskinspecifika overrides läggs i `appsettings.Development.local.json` (gitignorerad).
+- **`appsettings.json`**: tomma `ConnectionStrings:Default` och `Jwt:Key` (inga hemligheter i prod-config).
+- **`appsettings.Development.json`**: committad lokal mall med JWT (≥32 tecken) och `DESKTOP-4C7FIAD\SQLEXPRESS`.
+- **Overrides**: `appsettings.Development.local.json` (gitignorerad) eller env `ConnectionStrings__Default` / `Jwt__Key`.
 
 | Källa | Exempel |
 |-------|---------|
-| Env | `ConnectionStrings__Default`, `Jwt__Key` (≥32 tecken) |
+| Env | `ConnectionStrings__Default`, `Jwt__Key` (≥32 tecken, krävs i Production) |
 | Dev JSON | `backend/src/Glassgladje.Api/appsettings.Development.json` |
 | Lokal override | `appsettings.Development.local.json` |
 
-Exempel (lokal SQL Express):
+Exempel connection string (Development):
 
 ```
-Server=localhost\SQLEXPRESS;Database=Glassgladje;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true
+Server=DESKTOP-4C7FIAD\SQLEXPRESS;Database=Glassgladje;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true
 ```
 
-`appsettings.json` har tomma `ConnectionStrings:Default` och `Jwt:Key` så att hemligheter inte committas.
+API:t startar **inte** utan giltig `Jwt:Key` (≥32 tecken).
 
 ## MVP features (alla faser)
 
@@ -133,11 +135,21 @@ Server=localhost\SQLEXPRESS;Database=Glassgladje;Trusted_Connection=True;TrustSe
 |------|-----------|
 | Auth | `POST /api/auth/login\|register\|refresh`, `GET /me` |
 | Products | `GET /api/products`, CRUD admin |
-| Orders | `POST /api/orders`, dev-confirm, mine, admin list |
+| Orders | `POST /api/orders` (+ `accessToken`), GET med token/ägare/admin, dev-confirm, mine, admin list |
 | Stripe webhook | `POST /api/webhooks/stripe` |
 | ElevenAgent | `POST /api/elevenagent/chat`, `GET …/status` |
 | Accounting | `GET /api/accounting/dashboard\|summary\|transactions\|export`, `POST …/transactions` |
 | Health | `GET /api/health` |
+
+## Orderåtkomst
+
+`GET /api/orders/{id}` och `GET /api/orders/by-number/{orderNumber}` returnerar kunduppgifter endast om:
+
+1. anropande användare är **Admin**, eller
+2. inloggad **ägare** (`order.UserId`), eller
+3. giltig HMAC-**`accessToken`** (query) — skapas vid `POST /api/orders` och skickas vidare från kassan till orderbekräftelsen (`?accessToken=…`).
+
+Utan behörighet svarar API:t **404** (ingen läcka om ordern finns).
 
 ## Environment variables
 
