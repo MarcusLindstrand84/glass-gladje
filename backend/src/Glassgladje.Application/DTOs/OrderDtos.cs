@@ -25,7 +25,8 @@ public record CreateOrderResponse(
     string Currency,
     string? ClientSecret,
     string? PublishableKey,
-    bool DevMockPayment);
+    bool DevMockPayment,
+    string AccessToken);
 
 public record ConfirmDevPaymentRequest(Guid OrderId);
 

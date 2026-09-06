@@ -10,7 +10,8 @@ namespace Glassgladje.Application.Orders;
 public class OrderService(
     IApplicationDbContext db,
     IPaymentService paymentService,
-    IEmailSender emailSender) : IOrderService
+    IEmailSender emailSender,
+    IOrderAccessTokenGenerator accessTokenGenerator) : IOrderService
 {
     public async Task<CreateOrderResponse> CreateOrderAsync(
         CreateOrderRequest request,
@@ -129,7 +130,8 @@ public class OrderService(
             order.Currency,
             clientSecret,
             paymentService.PublishableKey,
-            devMock);
+            devMock,
+            accessTokenGenerator.Create(order.Id));
     }
 
     public async Task HandlePaymentSucceededAsync(string paymentIntentId, CancellationToken ct = default)
@@ -161,20 +163,55 @@ public class OrderService(
         await MarkPaidAndFulfillAsync(order, ct);
     }
 
-    public async Task<OrderDto?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<OrderDto?> GetByIdAsync(
+        Guid id,
+        string? userId,
+        bool isAdmin,
+        string? accessToken,
+        CancellationToken ct = default)
     {
         var order = await db.Orders.AsNoTracking()
             .Include(o => o.Items)
             .FirstOrDefaultAsync(o => o.Id == id, ct);
-        return order is null ? null : Map(order);
+        if (order is null || !CanAccess(order, userId, isAdmin, accessToken))
+        {
+            return null;
+        }
+
+        return Map(order);
     }
 
-    public async Task<OrderDto?> GetByOrderNumberAsync(string orderNumber, CancellationToken ct = default)
+    public async Task<OrderDto?> GetByOrderNumberAsync(
+        string orderNumber,
+        string? userId,
+        bool isAdmin,
+        string? accessToken,
+        CancellationToken ct = default)
     {
         var order = await db.Orders.AsNoTracking()
             .Include(o => o.Items)
             .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber, ct);
-        return order is null ? null : Map(order);
+        if (order is null || !CanAccess(order, userId, isAdmin, accessToken))
+        {
+            return null;
+        }
+
+        return Map(order);
+    }
+
+    private bool CanAccess(Order order, string? userId, bool isAdmin, string? accessToken)
+    {
+        if (isAdmin)
+        {
+            return true;
+        }
+
+        if (!string.IsNullOrEmpty(userId) && order.UserId == userId)
+        {
+            return true;
+        }
+
+        return accessTokenGenerator.IsValid(order.Id, accessToken);
     }
 
     public async Task<IReadOnlyList<OrderDto>> GetForUserAsync(string userId, CancellationToken ct = default)

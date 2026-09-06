@@ -14,6 +14,7 @@ type CreateOrderResponse = {
   clientSecret?: string | null
   publishableKey?: string | null
   devMockPayment: boolean
+  accessToken: string
 }
 
 export function CheckoutPage() {
@@ -65,15 +66,16 @@ export function CheckoutPage() {
         },
       })
 
+      const tokenQ = encodeURIComponent(data.accessToken)
       if (data.devMockPayment) {
         await api.post('/orders/dev-confirm-payment', { orderId: data.orderId })
         clear()
-        navigate(`/order/${data.orderId}?bekraftad=1`)
+        navigate(`/order/${data.orderId}?bekraftad=1&accessToken=${tokenQ}`)
         return
       }
 
       clear()
-      navigate(`/order/${data.orderId}?pending=1`)
+      navigate(`/order/${data.orderId}?pending=1&accessToken=${tokenQ}`)
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??

@@ -10,7 +10,7 @@ Premium svensk online-glassbutik med e-handel, smakrådgivare (röstkonsultation
 |-------|------------|
 | Frontend | React 18 + TypeScript + Vite + Tailwind CSS v4 |
 | Backend | ASP.NET Core 10 Web API (clean architecture) |
-| Database | **SQL Server** (`DESKTOP-4C7FIAD\SQLEXPRESS`) |
+| Database | **SQL Server** (t.ex. `localhost\SQLEXPRESS`) |
 | Auth | ASP.NET Identity + JWT + refresh tokens |
 | Payments | Stripe (dev-mock without keys) |
 | Voice | ElevenLabs TTS + Web Speech STT |
@@ -21,7 +21,7 @@ Premium svensk online-glassbutik med e-handel, smakrådgivare (röstkonsultation
 
 - .NET 10 SDK
 - Node.js 20+
-- SQL Server Express: `DESKTOP-4C7FIAD\SQLEXPRESS` (Windows Authentication)
+- SQL Server Express: t.ex. `localhost\SQLEXPRESS` (Windows Authentication)
 - VS Code (valfritt, men rekommenderas)
 
 ### Bygga (utan att hoppa mellan mappar)
@@ -86,11 +86,23 @@ npm run dev
 
 **Byt lösenord i produktion.**
 
-## SQL Server
+## SQL Server & secrets
+
+Sätt anslutningssträng och JWT via miljövariabler eller `appsettings.Development.json` (committad lokal mall). Maskinspecifika overrides läggs i `appsettings.Development.local.json` (gitignorerad).
+
+| Källa | Exempel |
+|-------|---------|
+| Env | `ConnectionStrings__Default`, `Jwt__Key` (≥32 tecken) |
+| Dev JSON | `backend/src/Glassgladje.Api/appsettings.Development.json` |
+| Lokal override | `appsettings.Development.local.json` |
+
+Exempel (lokal SQL Express):
 
 ```
-Server=DESKTOP-4C7FIAD\SQLEXPRESS;Database=Glassgladje;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true
+Server=localhost\SQLEXPRESS;Database=Glassgladje;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true
 ```
+
+`appsettings.json` har tomma `ConnectionStrings:Default` och `Jwt:Key` så att hemligheter inte committas.
 
 ## MVP features (alla faser)
 
