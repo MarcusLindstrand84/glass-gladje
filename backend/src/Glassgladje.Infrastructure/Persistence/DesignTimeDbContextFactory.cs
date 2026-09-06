@@ -8,7 +8,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Applicatio
     public ApplicationDbContext CreateDbContext(string[] args)
     {
         const string connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=Glassgladje;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true";
+            "Server=DESKTOP-4C7FIAD\SQLEXPRESS;Database=Glassgladje;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true";
 
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseSqlServer(connectionString)
