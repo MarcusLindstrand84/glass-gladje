@@ -4,7 +4,7 @@
 
 - **Frontend:** static SPA (Vite build → CDN / static host)
 - **API:** ASP.NET Core 10 on Windows/Linux
-- **Database:** SQL Server (t.ex. `localhost\SQLEXPRESS` i dev; managed SQL i prod)
+- **Database:** SQL Server (`DESKTOP-4C7FIAD\SQLEXPRESS` i Development; managed SQL i prod)
 
 ## Production checklist
 
@@ -50,14 +50,14 @@
 | `Database__Provider` | SqlServer | SqlServer |
 | Stripe keys | test or empty (dev-mock) | live |
 | ElevenLabs | optional | optional |
-| JWT key | appsettings dev key | secret store |
+| JWT key | `appsettings.Development.json` (≥32) | secret store / `Jwt__Key` (krävs) |
 
 ## Smoke test after deploy
 
 1. `GET /api/health` → healthy  
 2. `GET /api/products` → ≥ 1 product  
 3. Login admin  
-4. Create order (Stripe test or verify webhook)  
+4. Create order (Stripe test eller webhook); bekräftelsesidan ska fungera med `accessToken` från create-svaret  
 5. `GET /api/accounting/dashboard` as admin  
 6. `POST /api/elevenagent/chat` with a simple message  
 
