@@ -28,8 +28,12 @@ public static class DependencyInjection
         });
 
         var provider = configuration.GetValue<string>("Database:Provider") ?? "SqlServer";
-        var connectionString = configuration.GetConnectionString("Default")
-            ?? throw new InvalidOperationException("Connection string 'Default' saknas.");
+        var connectionString = configuration.GetConnectionString("Default");
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                "Connection string 'Default' saknas. Sätt ConnectionStrings__Default eller ConnectionStrings:Default.");
+        }
 
         services.AddDbContext<ApplicationDbContext>(options =>
         {
@@ -76,16 +80,9 @@ public static class DependencyInjection
 
         if (string.IsNullOrWhiteSpace(jwt.Key) || jwt.Key.Length < 32)
         {
-            jwt.Key = "Glassgladje-Dev-Only-Key-Change-In-Production-32+";
+            throw new InvalidOperationException(
+                "Jwt:Key saknas eller är för kort (minst 32 tecken). Sätt Jwt__Key eller Jwt:Key via miljövariabel eller appsettings.");
         }
-
-        services.PostConfigure<JwtOptions>(o =>
-        {
-            if (string.IsNullOrWhiteSpace(o.Key) || o.Key.Length < 32)
-            {
-                o.Key = jwt.Key;
-            }
-        });
 
         services.AddAuthentication(options =>
             {
@@ -109,6 +106,7 @@ public static class DependencyInjection
 
         services.AddAuthorization();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IOrderAccessTokenGenerator, OrderAccessTokenService>();
         services.AddScoped<IPaymentService, StripePaymentService>();
         services.AddScoped<IEmailSender, LoggingEmailSender>();
         services.AddScoped<ITextToSpeechService, ElevenLabsTtsService>();

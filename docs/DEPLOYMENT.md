@@ -4,7 +4,7 @@
 
 - **Frontend:** static SPA (Vite build → CDN / static host)
 - **API:** ASP.NET Core 10 on Windows/Linux
-- **Database:** SQL Server (`DESKTOP-4C7FIAD\SQLEXPRESS` in dev; managed SQL in prod)
+- **Database:** SQL Server (t.ex. `localhost\SQLEXPRESS` i dev; managed SQL i prod)
 
 ## Production checklist
 
@@ -15,7 +15,9 @@
    - Run app once (migrations + seed) or `dotnet ef database update`
 
 2. **Secrets (never commit)**
-   - `Jwt__Key` (≥ 32 random chars)
+   - `ConnectionStrings__Default` (eller `appsettings.Development.json` lokalt)
+   - `Jwt__Key` (≥ 32 random chars; krävs vid start)
+   - Maskinspecifika overrides: `appsettings.Development.local.json` (gitignorerad)
    - `Stripe__SecretKey`, `Stripe__PublishableKey`, `Stripe__WebhookSecret`
    - `ElevenLabs__ApiKey`, `ElevenLabs__VoiceId`
    - Change seed admin password immediately (`admin@glassgladje.se`)

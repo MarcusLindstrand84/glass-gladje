@@ -27,12 +27,15 @@ export function OrderConfirmationPage() {
   const [params] = useSearchParams()
   const confirmed = params.get('bekraftad') === '1'
   const pendingPayment = params.get('pending') === '1'
+  const accessToken = params.get('accessToken')
 
   const { data: order, isLoading, isError } = useQuery({
-    queryKey: ['order', id],
+    queryKey: ['order', id, accessToken],
     enabled: !!id,
     queryFn: async () => {
-      const { data } = await api.get<OrderDto>(`/orders/${id}`)
+      const { data } = await api.get<OrderDto>(`/orders/${id}`, {
+        params: { accessToken },
+      })
       return data
     },
   })

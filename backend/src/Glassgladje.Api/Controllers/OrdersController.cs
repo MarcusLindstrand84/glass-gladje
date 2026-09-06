@@ -48,7 +48,13 @@ public class OrdersController(IOrderService orderService) : ControllerBase
         try
         {
             await orderService.HandleDevMockPaymentAsync(request.OrderId, ct);
-            var order = await orderService.GetByIdAsync(request.OrderId, ct);
+            // Server-side trusted read after confirm (no guest token required here).
+            var order = await orderService.GetByIdAsync(
+                request.OrderId,
+                userId: null,
+                isAdmin: true,
+                accessToken: null,
+                ct);
             return order is null ? NotFound() : Ok(order);
         }
         catch (InvalidOperationException ex)
@@ -68,17 +74,27 @@ public class OrdersController(IOrderService orderService) : ControllerBase
 
     [HttpGet("{id:guid}")]
     [AllowAnonymous]
-    public async Task<ActionResult<OrderDto>> GetById(Guid id, CancellationToken ct)
+    public async Task<ActionResult<OrderDto>> GetById(
+        Guid id,
+        [FromQuery] string? accessToken,
+        CancellationToken ct)
     {
-        var order = await orderService.GetByIdAsync(id, ct);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var isAdmin = User.IsInRole(AppRoles.Admin);
+        var order = await orderService.GetByIdAsync(id, userId, isAdmin, accessToken, ct);
         return order is null ? NotFound() : Ok(order);
     }
 
     [HttpGet("by-number/{orderNumber}")]
     [AllowAnonymous]
-    public async Task<ActionResult<OrderDto>> GetByNumber(string orderNumber, CancellationToken ct)
+    public async Task<ActionResult<OrderDto>> GetByNumber(
+        string orderNumber,
+        [FromQuery] string? accessToken,
+        CancellationToken ct)
     {
-        var order = await orderService.GetByOrderNumberAsync(orderNumber, ct);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var isAdmin = User.IsInRole(AppRoles.Admin);
+        var order = await orderService.GetByOrderNumberAsync(orderNumber, userId, isAdmin, accessToken, ct);
         return order is null ? NotFound() : Ok(order);
     }
 
